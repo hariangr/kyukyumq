@@ -38,7 +38,7 @@ func (c *Client) Enqueue(ctx context.Context, queueName string, taskType string,
 	}
 
 	var msgID int64
-	query := `SELECT * FROM pgmq.send($1, $2::jsonb);`
+	query := `SELECT pgmq.send($1::TEXT, $2::JSONB);`
 	err = c.pool.QueryRow(ctx, query, queueName, wrapped).Scan(&msgID)
 	if err != nil {
 		return 0, fmt.Errorf("pgmq.send execution failed: %w", err)

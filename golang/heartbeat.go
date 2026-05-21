@@ -12,8 +12,13 @@ type executor interface {
 }
 
 func startHeartbeat(ctx context.Context, exec executor, queue string, msgID int64, extendBySeconds int32) func() {
+	if extendBySeconds <= 0 {
+		return func() {}
+	}
+
 	stop := make(chan struct{})
-	ticker := time.NewTicker(time.Duration(extendBySeconds/2) * time.Second)
+	interval := time.Duration(extendBySeconds/2) * time.Second
+	ticker := time.NewTicker(interval)
 
 	go func() {
 		defer ticker.Stop()
@@ -24,7 +29,7 @@ func startHeartbeat(ctx context.Context, exec executor, queue string, msgID int6
 			case <-ctx.Done():
 				return
 			case <-ticker.C:
-				query := `SELECT * FROM pgmq.set_vt($1, $2, $3);`
+				query := `SELECT pgmq.set_vt($1::TEXT, $2::BIGINT, $3::INTEGER);`
 				_, _ = exec.Exec(ctx, query, queue, msgID, extendBySeconds)
 			}
 		}
