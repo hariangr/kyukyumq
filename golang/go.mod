@@ -1,4 +1,4 @@
-module hariangr.my.id/kyukyumq
+module hariangr.my.id/lib/kyukyumq
 
 go 1.26.2
 

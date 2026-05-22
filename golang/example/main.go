@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-	"hariangr.my.id/kyukyumq"
+	"hariangr.my.id/lib/kyukyumq"
 )
 
 // EmailPayload represents your custom job argument fields

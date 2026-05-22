@@ -11,7 +11,7 @@ import (
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
 
-	kyukyumq "hariangr.my.id/kyukyumq"
+	kyukyumq "hariangr.my.id/lib/kyukyumq"
 )
 
 func setupTestDB(t *testing.T) (*pgxpool.Pool, func()) {
@@ -158,10 +158,10 @@ func (h *trackHandler) Processed() []kyukyumq.Task {
 
 // counterHandler tracks call count and can inject a delay.
 type counterHandler struct {
-	mu      sync.Mutex
-	count   int
-	fail    bool
-	delay   time.Duration
+	mu    sync.Mutex
+	count int
+	fail  bool
+	delay time.Duration
 }
 
 func (h *counterHandler) ProcessBatch(ctx context.Context, tasks []kyukyumq.Task) []error {
