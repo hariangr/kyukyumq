@@ -18,13 +18,13 @@ Ensure you run these schema foundations on your Postgres instance before initial
 CREATE EXTENSION IF NOT EXISTS pgmq CASCADE;
 
 -- Control coordinates for instant pausing mechanisms
-CREATE TABLE IF NOT EXISTS queue_control (
+CREATE TABLE IF NOT EXISTS pgmq.queue_control (
     queue_name TEXT PRIMARY KEY,
     is_paused BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 -- Asynchronous signaling trigger mapping definitions
-CREATE OR REPLACE FUNCTION notify_queue_control_change()
+CREATE OR REPLACE FUNCTION pgmq.notify_queue_control_change()
 RETURNS TRIGGER AS $$
 BEGIN
     PERFORM pg_notify(
@@ -36,6 +36,6 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER queue_control_trigger
-AFTER UPDATE ON queue_control
+AFTER UPDATE ON pgmq.queue_control
 FOR EACH ROW
-EXECUTE FUNCTION notify_queue_control_change();
+EXECUTE FUNCTION pgmq.notify_queue_control_change();
