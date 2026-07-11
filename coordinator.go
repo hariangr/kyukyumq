@@ -26,7 +26,7 @@ func NewQueueCoordinator(pool *pgxpool.Pool, queueName string) *QueueCoordinator
 
 func (q *QueueCoordinator) InitAndListen(ctx context.Context) error {
 	var isPaused bool
-	err := q.pool.QueryRow(ctx, "SELECT is_paused FROM queue_control WHERE queue_name = $1", q.queue).Scan(&isPaused)
+	err := q.pool.QueryRow(ctx, "SELECT is_paused FROM pgmq.queue_control WHERE queue_name = $1", q.queue).Scan(&isPaused)
 	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
 		return err
 	}
@@ -48,7 +48,7 @@ func (q *QueueCoordinator) listenLoop(ctx context.Context) {
 			continue
 		}
 
-		_, err = conn.Exec(ctx, "LISTEN queue_control_channel;")
+		_, err = conn.Exec(ctx, "LISTEN pgmq.queue_control_channel;")
 		if err != nil {
 			conn.Release()
 			time.Sleep(2 * time.Second)
